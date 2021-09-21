@@ -4,7 +4,7 @@ from threading import Timer
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-t", "--token", help="telegram bot token", dest="<TOKEN>", required=True)
+parser.add_argument("-t", "--token", help="telegram bot token", dest="token", required=True)
 args = parser.parse_args()
 
 bot = telebot.TeleBot(args.token)
@@ -48,6 +48,25 @@ def count_time(message):
 
     timer = Timer(minutes * 60, count_back, args=(message.chat.id,))
     timer.start()
+
+
+# обработка команды /start
+@bot.message_handler(commands=['start'])
+def start(message):
+    bot.send_message(message.chat.id, 'Здарова, заебал)\n\n'
+                                      'Я Саньтьяго, приехал с Кубы, чтобы дымить здесь.\n\n'
+                                      'Скажи мне через сколько курим\n'
+                                      '(10! - означает что курим через 10 минут)\n\n'
+                                      'Если че не понял тебе туда /help')
+
+
+# обработка команды /help
+@bot.message_handler(commands=['help'])
+def start(message):
+    bot.send_message(message.chat.id, 'Бля, ну ты тупой или прикидываешься?\n'
+                                      'Я же сказал 10! - через 10 минут курим\n'
+                                      'Включи тыкву 5! - это 5 минут\n'
+                                      'А я уже посчитаю, и напомню тебе)')
 
 
 # обработка текстовых сообщений
