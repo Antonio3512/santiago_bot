@@ -9,11 +9,14 @@ args = parser.parse_args()
 
 bot = telebot.TeleBot(args.token)
 
+# массив состояний бота в разных чатах
 alreadyCounting = {}
 
+# массив слов для команды ping
 wentArray = ["пашол", "пошел", "пошёл", "пашел", "пошол"]
 
 
+# обратный отсчет
 def count_back(chat_id):
     for i in reversed(range(10)):
         bot.send_message(chat_id, i + 1)
@@ -23,6 +26,7 @@ def count_back(chat_id):
     bot.send_sticker(chat_id, "CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ")
 
 
+# обработка команды создания таймера
 def count_time(message):
     if message.chat.id in alreadyCounting and alreadyCounting[message.chat.id]:
         bot.send_message(message.chat.id, "Не мешай, я уже считаю, я один блядь")
@@ -42,10 +46,11 @@ def count_time(message):
     alreadyCounting[message.chat.id] = True
     bot.send_message(message.chat.id, f'Засёк {minutes} мин')
 
-    timer = Timer(minutes * 60, count_back, args=(message.chat.id, ))
+    timer = Timer(minutes * 60, count_back, args=(message.chat.id,))
     timer.start()
 
 
+# обработка текстовых сообщений
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     text = message.text.lower()
