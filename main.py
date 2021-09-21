@@ -48,7 +48,7 @@ def count_time(message):
 
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
-    if message.text.lower == "привет":
+    if message.text.lower() == "привет":
         bot.send_message(message.chat.id, "Ну здарова, падла")
     if message.text.lower() in poshelArray:
         bot.send_message(message.chat.id, "нахуй)0), дурак кожаный")
