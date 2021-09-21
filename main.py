@@ -1,10 +1,13 @@
 import telebot
 import time
 from threading import Timer
+import argparse
 
-TOKEN = "1902178099:AAFnA5mgWb9eSMD7dV2ktcinaehhPFN-MX8"
+parser = argparse.ArgumentParser()
+parser.add_argument("--token", "-t", required=True)
+args = parser.parse_args()
 
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(args.token)
 
 alreadyCounting = {}
 
