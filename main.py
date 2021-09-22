@@ -12,6 +12,9 @@ bot = telebot.TeleBot(args.token)
 # массив состояний бота в разных чатах
 alreadyCounting = {}
 
+# массив таймеров по id чата
+timers = {}
+
 # массив слов для команды ping
 wentArray = ["пашол", "пошел", "пошёл", "пашел", "пошол"]
 
@@ -24,6 +27,13 @@ def count_back(chat_id):
     alreadyCounting[chat_id] = False
     bot.send_message(chat_id, "ПОПИЗДОВАЛИ")
     bot.send_sticker(chat_id, "CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ")
+
+
+def stop_counting(chat_id):
+    timers[chat_id].cancel()
+    alreadyCounting[chat_id] = False
+    timers.pop(chat_id)
+    bot.send_message(chat_id, "Стою, стою...")
 
 
 # обработка команды создания таймера
@@ -46,8 +56,8 @@ def count_time(message):
     alreadyCounting[message.chat.id] = True
     bot.send_message(message.chat.id, f'Засёк {minutes} мин')
 
-    timer = Timer(minutes * 60, count_back, args=(message.chat.id,))
-    timer.start()
+    timers[message.chat.id] = Timer(minutes * 60, count_back, args=(message.chat.id,))
+    timers[message.chat.id].start()
 
 
 # обработка команды /start
@@ -73,12 +83,19 @@ def start(message):
 @bot.message_handler(content_types=['text'])
 def get_text_messages(message):
     text = message.text.lower()
+    chat_id = message.chat.id
 
     if text == "привет":
-        bot.send_message(message.chat.id, "Ну здарова, падла")
+        bot.send_message(chat_id, "Ну здарова, падла")
 
     if text in wentArray:
-        bot.send_message(message.chat.id, "нахуй)0), дурак кожаный")
+        bot.send_message(chat_id, "нахуй)0), дурак кожаный")
+
+    if text == "стопэ":
+        if chat_id in timers:
+            stop_counting(chat_id)
+        else:
+            bot.send_message(chat_id, "Ты ниче не засек, обманщик")
 
     if text.endswith('!'):
         count_time(message)
