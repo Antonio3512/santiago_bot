@@ -21,10 +21,14 @@ wentArray = ["пашол", "пошел", "пошёл", "пашел", "пошол
 
 # обратный отсчет
 def count_back(chat_id):
+    timers.pop(chat_id)
+
     for i in reversed(range(10)):
         bot.send_message(chat_id, i + 1)
         time.sleep(1)
+
     alreadyCounting[chat_id] = False
+
     bot.send_message(chat_id, "ПОПИЗДОВАЛИ")
     bot.send_sticker(chat_id, "CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ")
 
@@ -94,8 +98,13 @@ def get_text_messages(message):
     if text == "стопэ":
         if chat_id in timers:
             stop_counting(chat_id)
+        elif alreadyCounting[chat_id]:
+            bot.send_message(chat_id, "Чуть чуть потерпи, заебал")
         else:
-            bot.send_message(chat_id, "Ты ниче не засек, обманщик")
+            bot.send_message(chat_id, "Ты ниче не засек")
+
+    # if text == "скока":
+    #     bot.send_message(chat_id, f"{time.thread_time()} чо ета я хз ")
 
     if text.endswith('!'):
         count_time(message)
