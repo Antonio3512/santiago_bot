@@ -29,11 +29,25 @@ alreadyCounting = {}
 timers = {}
 
 # массивы слов
-wentArray = ['пашол', 'пошел', 'пошёл', 'пашел', 'пошол']
+wentArray = ['пашол', 'пошел', 'пошёл', 'пашел', 'пошол', "пшел"]
 helloArray = ['привет', 'здарова']
 stopArray = ['стопэ', 'остановись']
 howManyArray = ['скока', 'скоро']
-nameArray = ['падла', 'дурак кожаный', 'псина']
+nameArray = [
+    'падла',
+    'дурак кожаный',
+    'псина',
+    'гандон',
+    'говнюк',
+    'дерьмо',
+    'жополиз',
+    'мудило',
+    'мудозмон',
+    'хохол',
+    'хрен',
+    'хуеплет',
+    'хуй'
+]
 stickerArray = ['CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ']
 
 
@@ -74,7 +88,7 @@ def count_time(message):
     chat_id = message.chat.id
 
     if chats[chat_id].already_counting:
-        bot.send_message(chat_id, 'Не мешай, я уже считаю, я один блядь')
+        bot.send_message(chat_id, f'Не мешай, я уже считаю, {name()},я один блядь')
         return
 
     if not message.text[:-1].isdigit():
@@ -84,11 +98,11 @@ def count_time(message):
     minutes = int(message.text[:-1])
 
     if minutes < 1:
-        bot.send_message(chat_id, 'Меньше курить надо, побольше время введи')
+        bot.send_message(chat_id, f'Меньше курить надо, {name()}, побольше время введи')
         return
 
     if minutes > 120:
-        bot.send_message(chat_id, f'Молодец, ты покуришь через {round(minutes / 60, 1)} ч. примерно')
+        bot.send_message(chat_id, f'Молодец, {name()}, ты покуришь через {round(minutes / 60, 1)} ч. примерно')
         return
 
     chats[chat_id].already_counting = True
@@ -138,9 +152,9 @@ def get_text_messages(message):
             stop_counting(chat_id)
             return
         if chats[chat_id].already_counting and chats[chat_id].timer is None:
-            bot.send_message(chat_id, 'Чуть чуть потерпи, заебал')
+            bot.send_message(chat_id, f'Чуть чуть потерпи, {name()}, заебал')
             return
-        bot.send_message(chat_id, 'Ты ниче не засек')
+        bot.send_message(chat_id, f'Ты ниче не засек, {name()}')
 
     if text in howManyArray:
         time_text = time.strftime('%M:%S', time.gmtime(chats[chat_id].end_time - time.time()))
