@@ -88,7 +88,7 @@ def count_time(message):
     chat_id = message.chat.id
 
     if chats[chat_id].already_counting:
-        bot.send_message(chat_id, f'Не мешай, я уже считаю, {name()},я один блядь')
+        bot.send_message(chat_id, f'Не мешай, я уже считаю, {name()}, я один блядь')
         return
 
     if not message.text[:-1].isdigit():
