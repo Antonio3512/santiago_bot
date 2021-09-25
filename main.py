@@ -3,6 +3,7 @@ import time
 from threading import Timer
 import argparse
 import random
+import json
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--token', help='telegram bot token', dest='token', required=True)
@@ -20,6 +21,7 @@ class ChatState:
         self.already_counting = False
         self.timer = None
         self.end_time = None
+        self.told_jokes = []
 
 
 # массив состояний бота в разных чатах
@@ -29,11 +31,11 @@ alreadyCounting = {}
 timers = {}
 
 # массивы слов
-wentArray = ['пашол', 'пошел', 'пошёл', 'пашел', 'пошол', "пшел"]
-helloArray = ['привет', 'здарова']
-stopArray = ['стопэ', 'остановись']
-howManyArray = ['скока', 'скоро']
-nameArray = [
+went_array = ['пашол', 'пошел', 'пошёл', 'пашел', 'пошол', "пшел"]
+hello_array = ['привет', 'здарова']
+stop_array = ['стопэ', 'остановись']
+how_many_array = ['скока', 'скоро']
+name_array = [
     'падла',
     'дурак кожаный',
     'псина',
@@ -42,23 +44,33 @@ nameArray = [
     'дерьмо',
     'жополиз',
     'мудило',
-    'мудозмон',
+    'мудозвон',
     'хохол',
     'хрен',
-    'хуеплет',
-    'хуй'
+    'хуеплёт',
+    'хуй',
+    'питух',
+    'шаромыжка',
+    'бычара',
+    'пёс'
 ]
-stickerArray = ['CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ']
+joke_array = ['анекдот', 'пошути', "аник", "анек"]
+sticker_array = ['CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ']
+
+# массив анекдотов
+with open('anecdotes.json') as jokes_file:
+    jokes = json.load(jokes_file)
+jokes = list(jokes.values())
 
 
 # случайное обращение
 def name():
-    return random.choice(nameArray)
+    return random.choice(name_array)
 
 
 # случайный стикер
 def sticker():
-    return random.choice(stickerArray)
+    return random.choice(sticker_array)
 
 
 # обратный отсчет
@@ -75,6 +87,23 @@ def count_back(chat_id):
     bot.send_sticker(chat_id, sticker())
 
 
+# рассказать анекдот
+def tell_a_joke(chat_id):
+    joke_idx = random.randint(0, len(jokes))
+
+    while joke_idx in chats[chat_id].told_jokes:
+        joke_idx += 1
+
+        if joke_idx >= len(jokes):
+            bot.send_message(chat_id, f"Не доёбывай меня, {name()}, пойдём лучше покурим.")
+            bot.send_sticker(chat_id, sticker())
+            break
+
+    bot.send_message(chat_id, jokes[joke_idx])
+
+    chats[chat_id].told_jokes.append(joke_idx)
+
+
 # остановка таймера
 def stop_counting(chat_id):
     chats[chat_id].timer.cancel()
@@ -88,7 +117,7 @@ def count_time(message):
     chat_id = message.chat.id
 
     if chats[chat_id].already_counting:
-        bot.send_message(chat_id, f'Не мешай, я уже считаю, {name()}, я один блядь')
+        bot.send_message(chat_id, f'Не мешай, {name()}, я уже считаю, я один блядь')
         return
 
     if not message.text[:-1].isdigit():
@@ -120,7 +149,7 @@ def start(message):
                                       'Я Саньтьяго, приехал с Кубы, чтобы дымить здесь.\n\n'
                                       'Скажи мне через сколько курим\n'
                                       '(10! - означает что курим через 10 минут)\n\n'
-                                      'Если че не понял тебе туда /help')
+                                      'Если чё не понял - тебе туда /help')
 
 
 # обработка команды /help
@@ -128,7 +157,7 @@ def start(message):
 def start(message):
     bot.send_message(message.chat.id, 'Бля, ну ты тупой или прикидываешься?\n'
                                       'Я же сказал 10! - через 10 минут курим\n'
-                                      'Включи тыкву 5! - это 5 минут\n'
+                                      'Включи тыкву: 5! - это 5 минут\n'
                                       'А я уже посчитаю, и напомню тебе)')
 
 
@@ -141,13 +170,13 @@ def get_text_messages(message):
     if chat_id not in chats:
         chats[chat_id] = ChatState()
 
-    if text in helloArray:
+    if text in hello_array:
         bot.send_message(chat_id, f'Ну здарова, {name()}')
 
-    if text in wentArray:
+    if text in went_array:
         bot.send_message(chat_id, f'нахуй)0), {name()}')
 
-    if text in stopArray:
+    if text in stop_array:
         if chats[chat_id].already_counting and chats[chat_id].timer:
             stop_counting(chat_id)
             return
@@ -156,12 +185,15 @@ def get_text_messages(message):
             return
         bot.send_message(chat_id, f'Ты ниче не засек, {name()}')
 
-    if text in howManyArray:
+    if text in how_many_array:
         time_text = time.strftime('%M:%S', time.gmtime(chats[chat_id].end_time - time.time()))
         bot.send_message(chat_id, f'Осталось {time_text}')
 
     if text.endswith('!'):
         count_time(message)
+
+    if text in joke_array:
+        tell_a_joke(chat_id)
 
 
 bot.polling(none_stop=True, interval=0)
