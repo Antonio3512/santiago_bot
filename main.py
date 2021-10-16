@@ -60,7 +60,6 @@ sticker_array = ['CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8l
 # массив анекдотов
 with open('anecdotes.json') as jokes_file:
     jokes = json.load(jokes_file)
-jokes = list(jokes.values())
 
 
 # случайное обращение
