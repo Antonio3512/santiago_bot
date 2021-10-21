@@ -96,7 +96,8 @@ def tell_a_joke(chat_id):
         if joke_idx >= len(jokes):
             bot.send_message(chat_id, f"Не доёбывай меня, {name()}, пойдём лучше покурим.")
             bot.send_sticker(chat_id, sticker())
-            break
+            
+            return
 
     bot.send_message(chat_id, jokes[joke_idx])
 
