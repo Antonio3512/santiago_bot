@@ -45,17 +45,36 @@ name_array = [
     'жополиз',
     'мудило',
     'мудозвон',
-    'хохол',
     'хрен',
     'хуеплёт',
     'хуй',
     'питух',
     'шаромыжка',
     'бычара',
-    'пёс'
+    'пёс',
+    "уебан",
+    "пиздаглазое мудоебище",
+    "распиздяй колхозный",
+    "сиська журавля",
+    "перхоть подзалупная",
+    "сосунок",
+    "капитан потные яички",
+    "писька бублика",
+    "шлепок майонезный",
+    "тп",
+    "уебок лесной",
+    "ебанат ты натрия",
+    "мозгоклюй",
+    "шлюхотанк"
 ]
 joke_array = ['анекдот', 'пошути', "аник", "анек"]
-sticker_array = ['CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ']
+sticker_array = [
+    'CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ',  # крыса
+    'CAACAgIAAxkBAAEEEwxiJcpQ4nCP23spg02TgnOaILBWNQAC-gADVp29Ckfe-pdxdHEBIwQ',  # уточка
+    'CAACAgQAAxkBAAEEExBiJcrad8N0a1PuwZc8sjDcl1WU6QACNQADrzysLbM4d2Ggm3jVIwQ',  # gta
+    'CAACAgQAAxkBAAEEExJiJcsCoMRrRUZ6S1sblBH8nRLNNAACtAEAAqixsRzCa-P1-tA_aiME',
+    'CAACAgIAAxkBAAEEExZiJctgE1PAP480QJ3d74vdrGsz_wACsQAD6iroJNrZmizM_Z3rIwQ'  # ну го
+]
 
 # массив анекдотов
 with open('anecdotes.json') as jokes_file:
@@ -96,7 +115,7 @@ def tell_a_joke(chat_id):
         if joke_idx >= len(jokes):
             bot.send_message(chat_id, f"Не доёбывай меня, {name()}, пойдём лучше покурим.")
             bot.send_sticker(chat_id, sticker())
-            
+
             return
 
     bot.send_message(chat_id, jokes[joke_idx])
