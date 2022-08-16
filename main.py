@@ -67,7 +67,8 @@ name_array = [
     "мозгоклюй",
     "шлюхотанк"
 ]
-joke_array = ['анекдот', 'пошути', "аник", "анек"]
+joke_array = ['анекдот', 'пошути']
+short_joke_array = ["короткий", "кор", "ане", "аник", "анек"]
 sticker_array = [
     'CAACAgIAAxkBAAEC7whhSGL2N-Xr2p9pZ_j_ztCFvvh8qwACUAADi_RmLF1_8lSVNSnvIAQ',  # крыса
     'CAACAgIAAxkBAAEEEwxiJcpQ4nCP23spg02TgnOaILBWNQAC-gADVp29Ckfe-pdxdHEBIwQ',  # уточка
@@ -80,6 +81,11 @@ sticker_array = [
 with open('anecdotes.json') as jokes_file:
     jokes = json.load(jokes_file)
 
+# массив индексов коротких анекдотов
+short_indexes = []
+for i in range(len(jokes)):
+    if len(jokes[i]) < 200:
+        short_indexes.append(i)
 
 # случайное обращение
 def name():
@@ -106,21 +112,30 @@ def count_back(chat_id):
 
 
 # рассказать анекдот
-def tell_a_joke(chat_id):
-    joke_idx = random.randint(0, len(jokes))
+def tell_a_joke(chat_id, short=False):
+    idx = random.randint(0, len(short_indexes))
+    if short:
+        joke_idx = short_indexes[idx]
+    else:
+        joke_idx = random.randint(0, len(jokes))
 
     while joke_idx in chats[chat_id].told_jokes:
-        joke_idx += 1
+        if short:
+            idx += 1
+            joke_idx = short_indexes[idx]
 
-        if joke_idx >= len(jokes):
+        else:
+            joke_idx += 1
+
+        if joke_idx >= len(jokes) or idx >= len(short_indexes):
             bot.send_message(chat_id, f"Не доёбывай меня, {name()}, пойдём лучше покурим.")
             bot.send_sticker(chat_id, sticker())
-
             return
 
-    bot.send_message(chat_id, jokes[joke_idx])
+    bot.send_message(chat_id, "Для любителей коротких:\n\n" + jokes[joke_idx])
 
     chats[chat_id].told_jokes.append(joke_idx)
+
 
 
 # остановка таймера
@@ -214,5 +229,8 @@ def get_text_messages(message):
     if text in joke_array:
         tell_a_joke(chat_id)
 
+    if text in short_joke_array:
+        tell_a_joke(chat_id, short=True)
 
-bot.polling(none_stop=True, interval=0)
+
+bot.polling(none_stop=True, interval=0, timeout=300)
